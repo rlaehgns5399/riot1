@@ -31,7 +31,7 @@ public class RiotApiController {
     private RestTemplate restTemplate;
 
     @Value("${riot.api.endpoint}")
-    private String riotApiEndpoint = "http://52.79.162.52:8080/api/v1/answer";
+    private String riotApiEndpoint;
 
     @Value("${riot.api.key}")
     private String riotApiKey;
