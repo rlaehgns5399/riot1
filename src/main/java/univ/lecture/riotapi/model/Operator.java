@@ -25,7 +25,7 @@ public enum Operator {
     DIV("/") {
         @Override
         public double evaluate(double firstOperand, double secondOperand) {
-            return firstOperand / secondOperand;
+            return secondOperand / firstOperand;
         }
     };
 
