@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import univ.lecture.riotapi.model.Summoner;
@@ -28,14 +29,15 @@ public class RiotApiController {
     private RestTemplate restTemplate;
 
     @Value("${riot.api.endpoint}")
-    private String riotApiEndpoint = "https://demo2446904.mockable.io/api/v1/answer/";
+    private String riotApiEndpoint = "http://52.79.162.52:8080/api/v1/answer";
 
     @Value("${riot.api.key}")
     private String riotApiKey;
-
-    @RequestMapping(value = "/calc/{name}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public double queryCalc(@PathVariable("name") String exp) throws UnsupportedEncodingException {
+    
+    @RequestMapping(value = "/calc", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Summoner queryCalc(@RequestParam(value="exp", required=true) String exp) throws UnsupportedEncodingException {
         final String url = riotApiEndpoint;
+        
         
         CalcApp p = new CalcApp();
         String[] expArray = exp.split(" ");
@@ -49,13 +51,15 @@ public class RiotApiController {
         Map<String, Object> parsedMap = new JacksonJsonParser().parseMap(response);
 
         parsedMap.forEach((key, value) -> log.info(String.format("key [%s] type [%s] value [%s]", key, value.getClass(), value)));
-
         /**
         Map<String, Object> summonerDetail = (Map<String, Object>) parsedMap.values().toArray()[0];
         String queriedName = (String)summonerDetail.get("name");
         int queriedLevel = (Integer)summonerDetail.get("summonerLevel");
         Summoner summoner = new Summoner(queriedName, queriedLevel);
 		*/
-        return result;
+        int teamId = 14;
+        long now = System.currentTimeMillis(); 
+        Summoner summoner = new Summoner(teamId, now, result);
+        return summoner;
     }
 }
