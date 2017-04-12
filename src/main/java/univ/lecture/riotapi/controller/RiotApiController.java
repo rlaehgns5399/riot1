@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,21 +37,12 @@ public class RiotApiController {
     private String riotApiKey;
     
     @RequestMapping(value = "/calc", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Summoner queryCalc(@RequestParam(required=true) String exp) throws UnsupportedEncodingException, IOException {
+    public Summoner queryCalc(@RequestBody String exp) throws UnsupportedEncodingException{
         final String url = riotApiEndpoint;
-        
-        
+
         CalcApp p = new CalcApp();
         String[] expArray = exp.split(" ");
         double result = p.calc(expArray);
-        /** SysOut code 
-        System.out.println("expression: " + exp);
-        
-        for(int i = 0; i < expArray.length; i++){
-        	System.out.println("expArray[" + i + "] : " + expArray[i]);
-        }
-        System.out.println("result: " + result);
-        */
         
         int teamId = 14;
         long now = System.currentTimeMillis(); 
