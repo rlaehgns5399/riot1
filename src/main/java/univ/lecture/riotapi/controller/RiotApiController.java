@@ -1,6 +1,8 @@
 package univ.lecture.riotapi.controller;
 
 import lombok.extern.log4j.Log4j;
+
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JacksonJsonParser;
@@ -14,9 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import univ.lecture.riotapi.model.Summoner;
 import univ.lecture.riotapi.model.CalcApp;
 import univ.lecture.riotapi.model.Operator;
-
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 /**
  * Created by tchi on 2017. 4. 1..
@@ -35,30 +36,33 @@ public class RiotApiController {
     private String riotApiKey;
     
     @RequestMapping(value = "/calc", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Summoner queryCalc(@RequestParam(value="exp", required=true) String exp) throws UnsupportedEncodingException {
+    public Summoner queryCalc(@RequestParam(required=true) String exp) throws UnsupportedEncodingException, IOException {
         final String url = riotApiEndpoint;
         
         
         CalcApp p = new CalcApp();
         String[] expArray = exp.split(" ");
+        double result = p.calc(expArray);
+        /** SysOut code 
         System.out.println("expression: " + exp);
+        
         for(int i = 0; i < expArray.length; i++){
         	System.out.println("expArray[" + i + "] : " + expArray[i]);
         }
-        double result = p.calc(expArray);
         System.out.println("result: " + result);
-        String response = restTemplate.getForObject(url, String.class);
-        Map<String, Object> parsedMap = new JacksonJsonParser().parseMap(response);
-
-        parsedMap.forEach((key, value) -> log.info(String.format("key [%s] type [%s] value [%s]", key, value.getClass(), value)));
-        /**
-        Map<String, Object> summonerDetail = (Map<String, Object>) parsedMap.values().toArray()[0];
-        String queriedName = (String)summonerDetail.get("name");
-        int queriedLevel = (Integer)summonerDetail.get("summonerLevel");
-        Summoner summoner = new Summoner(queriedName, queriedLevel);
-		*/
+        */
+        
         int teamId = 14;
         long now = System.currentTimeMillis(); 
+        JSONObject jsonObject = new JSONObject();
+        
+		jsonObject.put("teamId", teamId);
+		jsonObject.put("now", System.currentTimeMillis());
+		jsonObject.put("result", result);
+		
+		String response = restTemplate.postForObject(url, jsonObject, String.class);
+		System.out.println(response);
+		
         Summoner summoner = new Summoner(teamId, now, result);
         return summoner;
     }
